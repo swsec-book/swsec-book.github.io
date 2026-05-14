@@ -284,7 +284,7 @@ $ valgrind ./titanic 1000
 
 
 
-Il secondo esempio è il programma `test.c`, anche esso presente sia nella cartella `examples/sanitizer-examples`, e nel repository online su <https://github.com/swsec-book/sanitizer-examples/>.
+Il secondo esempio è il programma `test.c`, anche esso presente sia nella cartella `swsec-labs/sanitizers`, e nel repository online su <https://github.com/swsec-book/swsec-labs/>.
 
 Il programma alloca un array di caratteri sulla memoria heap, ed effettua un accesso errato tramite il puntatore. Inoltre, il programma contiene un memory leak, poiché la memoria non viene deallocata.
 
