@@ -156,9 +156,11 @@ addr = p64(ret_addr, endian='little')
 
 ### Valgrind
 
-I programmi di esempio qui mostrati sono disponibili nella macchina virtuale nella cartella `examples/sanitizer-examples`, e nel repository online su <https://github.com/swsec-book/sanitizer-examples/>.
+I programmi di esempio qui mostrati sono disponibili nella macchina virtuale nella cartella `swsec-labs/sanitizers`, e nel repository online su <https://github.com/swsec-book/swsec-labs/>.
 
-Il primo esempio è il programma `titanic.c`, il cui nome è un riferimento al famoso naufragio dovuto allo scontro (*crash*) con un iceberg. Il programma prende in ingresso un numero intero, e stampa ripetutamente a video un messaggio con il valore di un contatore.
+Il primo esempio è il programma `titanic.c`, il cui nome è un riferimento al famoso naufragio dovuto allo scontro (*crash*) con un iceberg. L'esempio è tratto da un tutorial di [Jason Heeris](https://github.com/detly/valgrind-gdb-tute/).
+
+Il programma prende in ingresso un numero intero, e stampa ripetutamente a video un messaggio con il valore di un contatore.
 
 Se si esegue il programma in ambiente Ubuntu 20.04 (compilatore gcc 9.3.0), si ottiene il seguente output.
 
