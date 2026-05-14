@@ -1,0 +1,26 @@
+site_name: Software Security Book
+site_url: https://swsec-book.github.io
+
+nav:
+  - Home: index.md
+  - Setup: setup.md
+  - Examples:
+    - Memory Management Vulnerabilities: examples/mem-mgmt-vulns.md
+    - Web Application Vulnerabilities: examples/web-vulns.md
+    - LLM-based Application Vulnerabilities: examples/llm-vulns.md
+    - Fuzzing: examples/fuzzing.md
+    - Static Analysis: examples/static-analysis.md
+  - Exercises:
+    - Memory Management Vulnerabilities: exercises/mem-mgmt-vulns.md
+    - Web Application Vulnerabilities: exercises/web-vulns.md
+    - LLM-based Application Vulnerabilities: exercises/llm-vulns.md
+    - Fuzzing: exercises/fuzzing.md
+    - Static Analysis: exercises/static-analysis.md
+
+theme:
+  name: mkdocs
+  locale: it
+  highlightjs: true
+
+markdown_extensions:
+  - attr_list
