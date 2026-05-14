@@ -363,8 +363,7 @@ $ valgrind --track-origins=yes --leak-check=full ./test
 
 ### Address Sanitizer (ASan)
 
-È possibile analizzare il secondo esempio precedente (il programma `test.c`) anche utilizzando Address Sanitizer. L'esempio è presente sia nella cartella `examples/sanitizer-examples`, e nel repository online su <https://github.com/swsec-book/sanitizer-examples/>.
-
+È possibile analizzare il secondo esempio precedente (il programma `test.c`) anche utilizzando Address Sanitizer.
 
 ```
 $ gcc -fsanitize=address -g -o test test.c
