@@ -21,11 +21,8 @@ theme:
   name: mkdocs
   locale: it
   highlightjs: true
-
-extra:
   analytics:
-    provider: google
-    property: G-8JQY0C31BY
+    gtag: G-8JQY0C31BY
 
 markdown_extensions:
   - attr_list
