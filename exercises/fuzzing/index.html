@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://swsec-book.github.io/exercises/fuzzing/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Fuzzing - Software Security Book</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-8JQY0C31BY"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', "G-8JQY0C31BY");
+        </script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Software Security Book</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../setup/" class="nav-link">Setup</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../examples/mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../examples/web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../examples/llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../examples/fuzzing/" class="dropdown-item">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="../../examples/static-analysis/" class="dropdown-item">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Exercises</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="../static-analysis/" class="dropdown-item">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../llm-vulns/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../static-analysis/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#fuzzing-exercises" class="nav-link">Esercizi su fuzzing</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#rilevare-la-vulnerabilita-heartbleed" class="nav-link">Rilevare la vulnerabilità Heartbleed</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#diagnosticare-la-vulnerabilita" class="nav-link">Diagnosticare la vulnerabilità</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#asan-e-valgrind" class="nav-link">ASan e Valgrind</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#persistent-mode" class="nav-link">Persistent mode</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#correggere-la-vulnerabilita-heartbleed" class="nav-link">Correggere la vulnerabilità Heartbleed</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="fuzzing-exercises">Esercizi su fuzzing</h1>
+<p>Nei seguenti esercizi, viene richiesto di applicare il fuzzing per riprodurre la <a href="https://www.heartbleed.com">nota vulnerabilità <code>Heartbleed</code> (CVE-2014-0160)</a>, utilizzando il fuzzer AFL e il sanitizer ASan.</p>
+<p>La vulnerabilità Heartbleed è un buffer over-read nel componente Heartbeat Extension di OpenSSL (versione 1.0.1f). OpenSSL è una libreria che implementa i protocolli TLS (Transport Layer Security) ed SSL (Secure Socket Layer).</p>
+<p><img alt="XKCD" src="https://imgs.xkcd.com/comics/heartbleed_explanation.png" /></p>
+<p>Il codice dell'esercizio è disponibile nella macchina virtuale nella cartella <code>swsec-labs/fuzzing/heartbleed</code>, e nel repository online su <a href="https://github.com/swsec-book/swsec-labs/">https://github.com/swsec-book/swsec-labs/</a>. L'autore dell'esercizio è Michael Macnair (<a href="https://mykter.com/">https://mykter.com/</a>).</p>
+<h2 id="rilevare-la-vulnerabilita-heartbleed">Rilevare la vulnerabilità Heartbleed</h2>
+<p>Il codice contiene una sotto-cartella <code>openssl</code> con il codice sorgente vulnerabile.
+Il primo passo dell'esercizio richiede di compilare il progetto OpenSSL, utilizzando il compilatore di AFL, e attivando ASan.</p>
+<pre><code>$ cd openssl
+$ &lt;inserire le variabili di ambiente CC, CXX&gt; ./config -d -g -no-shared
+$ &lt;inserire le variabili di ambiente per ASAN&gt; make build_libs
+</code></pre>
+<p>Si suggerisce di utilizzare i compilatori <code>afl-clang-fast</code> (variabile <code>CC</code>) e <code>afl-clang-fast++</code> (variabile <code>CXX</code>).</p>
+<p>Il secondo passo dell'esercizio richiede di completare il codice di un programma nel file <code>handshake.cc</code> (<em>test harness</em>) che richiami la libreria OpenSSL. Il programma dovrà <a href="https://stackoverflow.com/questions/15883568/reading-from-stdin">leggere in input 100 byte dal canale standard input, e copiarli in un array</a> che sarà passato in input alla libreria OpenSSL.</p>
+<pre><code>int main() {
+  static SSL_CTX *sctx = Init();
+  SSL *server = SSL_new(sctx);
+  BIO *sinbio = BIO_new(BIO_s_mem());
+  BIO *soutbio = BIO_new(BIO_s_mem());
+  SSL_set_bio(server, sinbio, soutbio);
+  SSL_set_accept_state(server);
+
+  /* TODO: Completare il programma in questo punto,
+           leggendo 100 byte dallo STDIN usando la funzione read(),
+           e copiando i byte in un array data[100].
+           Modificare la chiamata a BIO_write() indicando la dimensione dell'array.
+   */
+
+  BIO_write(sinbio, data, size);
+
+  SSL_do_handshake(server);
+  SSL_free(server);
+  return 0;
+}
+</code></pre>
+<p>Compilare il test harness, utilizzando il compilatore fornito da AFL, e abilitando ASan.</p>
+<pre><code>$ &lt;inserire variabile per ASan&gt; &lt;compilatore AFL C++&gt; handshake.cc 
+            -o handshake
+            openssl/libssl.a openssl/libcrypto.a 
+            -I openssl/include -ldl
+</code></pre>
+<p>Prima di eseguire il programma, si crei un certificato fittizio con il comando <code>openssl</code>.</p>
+<pre><code>$ openssl req -x509 -newkey rsa:512 -keyout server.key -out server.pem -days 365 -nodes -subj /CN=a/
+</code></pre>
+<p>Infine, si avvii il fuzzer:</p>
+<ol>
+<li>Creare una cartella <code>input</code>, che conterrà i seed input per il fuzzing</li>
+<li>Aggiungere come seed input un singolo file con del semplice testo (ad esempio, la parola "ciao")</li>
+<li>Lanciare il comando <code>afl-fuzz</code>, indicando il percorso del programma <code>handshake</code> (ossia il test harness)</li>
+<li>Attendere un breve tempo (circa 5 minuti), verificare che AFL rilevi almeno un crash</li>
+</ol>
+<p>La sintassi del comando <code>afl-fuzz</code> è:</p>
+<pre><code>$ afl-fuzz &lt;parametri&gt; -- &lt;programma target&gt;
+</code></pre>
+<p><em>Nota:</em> Fare attenzione a NON usare @@, in modo che i fuzz input siano passati via STDIN.</p>
+<h2 id="diagnosticare-la-vulnerabilita">Diagnosticare la vulnerabilità</h2>
+<p>L'esercizio chiede di diagnosticare la vulnerabilità con le informazioni fornite da ASan. 
+Eseguire nuovamente il programma <code>handshake</code> senza usare AFL, e passandogli in ingresso il file con l'input che causa il crash.</p>
+<p>Interpretare l'output di ASan:</p>
+<ul>
+<li>che tipo di errore che è stato rilevato?</li>
+<li>qual è il punto nel codice di OpenSSL che causa l'errore?</li>
+<li>qual è il punto nel codice di OpenSSL che ha allocato il buffer?</li>
+</ul>
+<p>Successivamente, si esegua ancora una volta il programma <code>handshake</code> tramite GDB, per ottenere ulteriori informazioni di debug. Poiché è abilitato ASan, occorre inserire un breakpoint prima di lanciare l'esecuzione, che ferma il processo prima che ASan forzi la terminazione. Si usi GDB per Ispezionare lo stack frame, ed il contenuto della variabile <code>payload</code>.</p>
+<pre><code>gdb&gt; set breakpoint pending on
+gdb&gt; break __asan::ReportGenericError
+gdb&gt; run &lt; file_input_crash
+...
+gdb&gt; backtrace
+gdb&gt; frame 2
+gdb&gt; print/x payload
+</code></pre>
+<p>Si confronti il contenuto della variabile <code>payload</code> con il contenuto del file di input.
+È possibile visualizzare il file di input con il seguente comando.</p>
+<pre><code>$ hexdump -C file_input_crash
+</code></pre>
+<p>Quali sono i byte dell'input che provocano l'errore?</p>
+<h2 id="asan-e-valgrind">ASan e Valgrind</h2>
+<p>Si ricompili il programma <code>handshake</code> <em>senza ASan</em>, e lo si esegua di nuovo con l'input che ha prima causato il crash.</p>
+<p>In questo caso, il crash non si verificherà di nuovo. Come mai?</p>
+<p>Successivamente, si esegua questa version del programma <em>senza ASan</em> tramite il tool Valgrind.</p>
+<p>In questo caso, la vulnerabilità viene rilevata? Si confronti la diagnosi di Valgrind con quella precedente ottenuta da ASan.</p>
+<h2 id="persistent-mode">Persistent mode</h2>
+<p>Si modifichi il test harness per fare in modo di utilizzare la modalità "persistent mode" di AFL.
+Si raccomanda di utilizzare il compilatore <code>afl-clang-fast++</code>.
+Si consulti la documentazione di AFL per maggiori informazioni, al sito <a href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/instrumentation/README.persistent_mode.md">https://github.com/AFLplusplus/AFLplusplus/blob/stable/instrumentation/README.persistent_mode.md</a>.</p>
+<p>Si confronti il throughput del fuzzing (numero di esecuzioni al secondo) con e senza la modalità persistent mode.</p>
+<ul>
+<li>Di quanto cambia il throughput?</li>
+<li>Quanto tempo occorre per rilevare la vulnerabilità?</li>
+</ul>
+<h2 id="correggere-la-vulnerabilita-heartbleed">Correggere la vulnerabilità Heartbleed</h2>
+<p>La vulnerabilità è legato alla seguente struttura dati, definita in <code>include/openssl/ssl3.h</code> del sorgente di OpenSSL.</p>
+<pre><code>typedef struct ssl3_record_st
+        {
+/*r */  int type;               /* type of record */
+/*rw*/  unsigned int length;    /* How many bytes available */
+/*r */  unsigned int off;       /* read/write offset into 'buf' */
+/*rw*/  unsigned char *data;    /* pointer to the record data */
+/*rw*/  unsigned char *input;   /* where the decode bytes are */
+/*r */  unsigned char *comp;    /* only used with decompression - malloc()ed */
+/*r */  unsigned long epoch;    /* epoch number, needed by DTLS1 */
+/*r */  unsigned char seq_num[8]; /* sequence number, needed by DTLS1 */
+        } SSL3_RECORD;
+</code></pre>
+<p>Il vettore <code>data</code> è strutturato come segue.</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>payload_length</th>
+<th>...dati...</th>
+<th>...padding</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(1 byte)</td>
+<td>(2 byte)</td>
+<td>(variabile)</td>
+<td>(arrotonda la dimensione a 16)</td>
+</tr>
+</tbody>
+</table>
+<p>Nella struttura <code>SSL3_RECORD</code>, il valore di <code>length</code> deve essere maggiore o uguale a <code>payload_length + 1+2+16</code>.</p>
+<p>Correggere il seguente codice vulnerabile in OpenSSL per prevenire l'attacco. Se <code>payload_length</code> contiene un valore eccessivamente elevato, si forzi l'uscita della funzione con il valore zero (<code>return 0</code>).</p>
+<pre><code>    unsigned char *p = &amp;s-&gt;s3-&gt;rrec.data[0], *pl;
+    unsigned short hbtype;
+    unsigned int payload;
+    unsigned int padding = 16; /* Use minimum padding */
+
+    /* Read type and payload length first */
+    hbtype = *p++;
+    n2s(p, payload);
+
+    /* TODO: Aggiungere input validation */
+
+    ...
+    /* Enter response type, length and copy payload */
+    *bp++ = TLS1_HB_RESPONSE;
+    s2n(payload, bp);
+    memcpy(bp, pl, payload);
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

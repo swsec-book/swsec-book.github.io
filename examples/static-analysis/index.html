@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://swsec-book.github.io/examples/static-analysis/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Static Analysis - Software Security Book</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-8JQY0C31BY"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', "G-8JQY0C31BY");
+        </script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Software Security Book</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../setup/" class="nav-link">Setup</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../fuzzing/" class="dropdown-item">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Exercises</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../exercises/mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/fuzzing/" class="dropdown-item">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/static-analysis/" class="dropdown-item">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../fuzzing/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../exercises/mem-mgmt-vulns/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#static-analysis" class="nav-link">Static analysis</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#codeql-query-puntuali" class="nav-link">CodeQL - query puntuali</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#codeql-query-di-data-flow" class="nav-link">CodeQL - query di data flow</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="static-analysis">Static analysis</h1>
+<h2 id="codeql-query-puntuali">CodeQL - query puntuali</h2>
+<p>Sono qui mostrati alcuni esempi di analisi statica su piccoli programmi, tramite il framework <strong>CodeQL</strong>. Sia il codice dei programmi da analizzare, sia il codice delle query, sono disponibili nella macchina virtuale nella cartella <code>swsec-labs/static-analysis/</code>, e nel repository online su <a href="https://github.com/swsec-book/swsec-labs">https://github.com/swsec-book/swsec-labs</a>.</p>
+<p>Posizionatevi nella cartella <code>codeql-demo-project</code>, ed effettuate il build del progetto per verificarne il corretto funzionamento.</p>
+<pre><code>$ cd codeql-demo-project
+
+$ mvn clean install
+</code></pre>
+<p>Per creare un database CodeQL del progetto, ripetere il build del progetto tramite il comando <code>codeql</code> come segue.</p>
+<pre><code>$ codeql database create &quot;codeql-demo-db&quot; --language=java
+</code></pre>
+<p>Il database è già disponibile nel file <code>codeql-demo-db.zip</code> cartella.</p>
+<p>Avviare VSCode con il workspace fornito con CodeQL, tramite la scorciatoia fornita sul desktop della macchina virtuale, oppure tramite il seguente comando.</p>
+<pre><code>code ~/vscode-codeql-starter/vscode-codeql-starter.code-workspace
+</code></pre>
+<p>Nella barra laterale di VSCode, clickate sulla icona della estensione CodeQL (simbolo "QL"). Nella sezione <em>database</em> utilizzare la funzione di import del database, selezionando il file zip del database del progetto di esempio. </p>
+<p><img alt="CodeQL import" src="../../img/static-analysis/codeql-db-import.png" /></p>
+<p>Nella barra laterale di VSCode, clickate sulla icona della sezione <em>Explorer</em> (prima icona). Da lì è possibile visualizzare il codice sorgente della applicazione, che è stato incluso nel database appena importato.</p>
+<p><img alt="CodeQL source code" src="../../img/static-analysis/codeql-source-code.png" /></p>
+<p>Sempre nella sezione <em>Explorer</em>, nella sotto-cartella <code>codeql-query</code>, sono presenti vari file con estensione <code>.ql</code> contenenti le query di questo esempio.</p>
+<p>La query di esempio in <code>example-empty-block.ql</code> cerca blocchi IF in programmi Java che non hanno alcuna istruzione al loro interno. È possibile lanciare la query clickando sulla icona di esecuzione in alto a destra (<em>CodeQL: Run local query</em>), oppure cliccando sul nome del file <code>.ql</code> e selezionando <em>CodeQL: Run Queries in Selected Files</em>.</p>
+<pre><code>import java
+
+from BlockStmt block
+where block.getNumStmt() = 0
+select block, &quot;This block-statement is redundant.&quot;
+</code></pre>
+<p><img alt="CodeQL empty block query" src="../../img/static-analysis/codeql-empty-block-query.png" /></p>
+<p>La query rileva il seguente codice (<code>EmptyBlock.java</code>).</p>
+<pre><code>package it.unina;
+
+public class EmptyBlock {
+
+    int write(int[] buf, int size, int loc, int val) {
+
+        if (loc &gt;= size) {
+           // return -1;
+        }
+
+        buf[loc] = val;
+
+        return 0;
+    }
+
+}
+</code></pre>
+<p>La seguente query (<code>example-exception.ql</code>) cerca tutte le occorrenze di blocchi CATCH in cui l'eccezione gestita sia di tipo <code>AnException</code>.</p>
+<pre><code>import java
+
+from TryStmt trystmt
+where trystmt.getACatchClause()
+             .getVariable()
+             .getType()
+             .getName() = &quot;AnException&quot;
+select trystmt,&quot;Try-catch block found!&quot;
+</code></pre>
+<p>CodeQL rileva una occorrenza del pattern nel file <code>TestException.java</code>.</p>
+<p>Ai fini di scrivere query CodeQL, è utile ispezionare lo Abstract Syntax Tree (AST) di un programma contenente il pattern di interesse. In questo caso, è possibile utilizzare la funzione <em>CodeQL: View AST</em>, cliccando con il tasto destro sul nome del file <code>TestException.java</code>.</p>
+<p><img alt="CodeQL AST menu" src="../../img/static-analysis/codeql-ast-menu.png" /></p>
+<p><img alt="CodeQL AST viewer" src="../../img/static-analysis/codeql-ast-viewer.png" /></p>
+<p>Lo AST mostra che:</p>
+<ul>
+<li>Il blocco TRY è rappresentato dalla classe <code>TryStmt</code></li>
+<li>La classe <code>TryStmt</code> contiene un riferimento a un <code>BlockStmt</code>, e un riferimento a <code>CatchClause</code></li>
+<li>La classe <code>CatchClause</code> contiene una dichiarazione di variabile, il cui tipo rappresenta la eccezione gestita.</li>
+</ul>
+<p>Nello sviluppo delle query, è possibile partire dai nomi delle classi nello AST, e consultare i metodi forniti da ogni classe usando l'ambiente di sviluppo. L'elenco dei metodi è consultabile tramite i tasti CONTROL + SPAZIO.</p>
+<p><img alt="CodeQL help inline" src="../../img/static-analysis/codeql-help-inline.png" /></p>
+<h2 id="codeql-query-di-data-flow">CodeQL - query di data flow</h2>
+<p>CodeQL permette di cercare flussi di dati all'interno di un programma, ad esempio per rilevare vulnerabilità di tipo <em>injection</em>. Nella query CodeQL, è possibile definire i punti del programma che rappresentano fonti di dati (<em>source</em>) e i punti del programma che rappresentano destinazioni "pericolose" (<em>sink</em>), come ad esempio le funzioni che accedono ad un database nel caso di SQL injection. CodeQL verificherà la presenza di flussi tra tutti i source e tutti i sink identificati dalla query.</p>
+<p>CodeQL permette due tipi di query di analisi data flow.</p>
+<ul>
+<li>
+<p>Analisi <em>intra-procedurale</em> (local):</p>
+<ul>
+<li>Analizza i flussi all'interno di una singola funzione</li>
+<li>Peso computazionale leggero</li>
+<li>Utilizza i predicati <em>localFlow()</em> e <em>localTaint()</em></li>
+</ul>
+</li>
+<li>
+<p>Analisi <em>inter-procedurale</em> (global):</p>
+<ul>
+<li>Analizza i flussi che attraversano più funzioni</li>
+<li>Peso computazionale elevato</li>
+<li>Utilizza i predicati <em>isSource()</em> e <em>isSink()</em></li>
+</ul>
+</li>
+</ul>
+<p>Inoltre, CodeQL distingue tra "<em>Dataflow analysis</em>" e "<em>Taint analysis</em>". In entrambi i casi, analizza i flussi di dati nel programma. Nel caso di <em>Dataflow analysis</em>, CodeQL è più conservativo nella ricerca dei flussi, focalizzandosi solo su quelli che sia sicuro siano percorribili, per evitare i falsi allarmi; invece, nel caso di <em>Taint analysis</em>, CodeQL include anche flussi che sono potenzialmente non percorribili, aumentando la possibilità di falsi allarmi.</p>
+<p>Ad esempio, nel seguente codice, è presente un flusso tra il valore di ritorno della funzione <code>mySource()</code>, e il valore di ingresso della funzione <code>mySink()</code>. 
+Il flusso include una operazione "non-value-preserving", in cui la variabile <code>s</code> è combinata con una stringa nel corso del flusso. Questa modifica potrebbe vanificare un eventuale attacco. Nel caso di <em>Dataflow analysis</em>, i flussi con operazioni "non-value-preserving" sono ignorati, per evitare falsi allarmi. Nel caso di <em>Taint analysis</em>, questi flussi sono tenuti in considerazione.</p>
+<pre><code>  String s = a.mySource();
+  String r = s + &quot; test&quot;;   // operazione &quot;non-value-preserving&quot;
+
+  ...
+
+  b.mySink(r);
+</code></pre>
+<p>Il seguente esempio mostra una query di <em>taint analysis</em> di tipo <em>intra-procedurale</em>, ricercando i flussi tra le funzioni <code>mySource()</code> e <code>mySink()</code>. La query è nel file <code>example-taint-local.ql</code>.</p>
+<pre><code>import java
+import semmle.code.java.dataflow.DataFlow::DataFlow
+import semmle.code.java.dataflow.TaintTracking
+
+from MethodCall a, MethodCall b, VarAccess arg
+where a.getCallee().getName() = &quot;mySource&quot; and
+      b.getCallee().getName() = &quot;mySink&quot; and
+      arg = b.getAnArgument() and
+      TaintTracking::localTaint(exprNode(a), exprNode(arg))
+select arg, &quot;data flow found&quot;
+</code></pre>
+<p>La query rileva due risultati, nei file <code>App.java</code> (ha un flusso con solo operazioni value-preserving) e <code>App2.java</code> (include una operazione non-value-preserving, come nell'esempio precedente).</p>
+<p><img alt="CodeQL taint local" src="../../img/static-analysis/codeql-local-taint-analysis.png" /></p>
+<p>Se si modifica la query precedente, usando il predicato <code>localFlow()</code> al posto di <code>localTaint()</code>, viene rilevato solo il flusso in <code>App.java</code>, ma non in <code>App2.java</code>.</p>
+<p>Il seguente esempio mostra una query di <em>taint analysis</em> di tipo <em>inter-procedurale</em>. Anche in questo caso, si cercano flussi tra le funzioni <code>mySource()</code> e <code>mySink()</code>. Le query inter-procedurali richiedono di usare il costrutto <code>module</code> del linguaggio CodeQL, in cui definire i due predicati che identificano i source e i sink della analisi. In questo caso, si ricercano i source appartenenti alla classe <code>MyClassA</code>, e i sink appartenenti alla classe <code>MyClassB</code>. La query è nel file <code>example-taint-global.ql</code>.</p>
+<pre><code>/** 
+ * @kind path-problem
+ * @id java/my-taint-propagation
+ * @precision high
+ * @security-severity 9.9
+ * @problem.severity error
+**/
+
+import java
+import semmle.code.java.dataflow.TaintTracking
+
+module MyTaintConfig implements DataFlow::ConfigSig {
+
+    predicate isSource(DataFlow::Node source) {
+        exists(MethodCall ma | 
+            source.asExpr() = ma and
+            ma.getCallee().getName() = &quot;mySource&quot; and
+            ma.getCallee().getDeclaringType().getName() = &quot;MyClassA&quot;
+        )
+    }
+
+    predicate isSink(DataFlow::Node sink) {
+        exists(VarAccess arg, MethodCall mb |
+            sink.asExpr() = arg and
+            arg = mb.getAnArgument() and
+            mb.getCallee().getName() = &quot;mySink&quot; and
+            mb.getCallee().getDeclaringType().getName() = &quot;MyClassB&quot;
+        )
+    }
+
+}
+
+module MyTaint = TaintTracking::Global&lt;MyTaintConfig&gt;;
+
+import MyTaint::PathGraph
+
+from MyTaint::PathNode source, MyTaint::PathNode sink
+where MyTaint::flowPath(source, sink) 
+select sink.getNode(), source, sink, &quot;Taint propagation found&quot;
+</code></pre>
+<p>La query riporta tre risultati. Oltre ai flussi nei file <code>App.java</code> e <code>App2.java</code> dell'esempio precedente, la query rileva un flusso inter-procedurale nel file <code>App3.java</code>.</p>
+<p><img alt="CodeQL taint global" src="../../img/static-analysis/codeql-global-taint-analysis.png" /></p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

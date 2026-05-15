@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://swsec-book.github.io/examples/fuzzing/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Fuzzing - Software Security Book</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-8JQY0C31BY"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', "G-8JQY0C31BY");
+        </script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Software Security Book</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../setup/" class="nav-link">Setup</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="../static-analysis/" class="dropdown-item">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Exercises</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../exercises/mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/fuzzing/" class="dropdown-item">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/static-analysis/" class="dropdown-item">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../llm-vulns/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../static-analysis/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#fuzzing" class="nav-link">Fuzzing</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#metasploit" class="nav-link">Metasploit</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#boofuzz" class="nav-link">Boofuzz</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#mutiny" class="nav-link">Mutiny</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#afl" class="nav-link">AFL</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="fuzzing">Fuzzing</h1>
+<h2 id="metasploit">Metasploit</h2>
+<p>In questo esempio, viene mostrato un esperimento di fuzzing su un semplice server FTP, tramite il tool Metasploit. Il codice del server FTP è disponibile nella macchina virtuale nella cartella <code>swsec-labs/fuzzing/ftp</code>, e nel repository online su <a href="https://github.com/swsec-book/swsec-labs/">https://github.com/swsec-book/swsec-labs/</a>.</p>
+<p>Nella sotto-cartella <code>ftp-server</code>, eseguite i seguenti comandi per scomprimere il codice sorgente dello FTP ed effettuarne il build del codice.</p>
+<pre><code>$ cd ftp-server
+
+$ tar zxf hpaftpd.tgz
+
+$ patch -p1 -d hpaftpd-1.05/ &lt; hpaftpd-debug.patch
+
+$ cd hpaftpd-1.05
+
+$ make CFLAGS=&quot;-g&quot;
+</code></pre>
+<p>Per verificare il funzionamento del server FTP, avviarlo con i comandi:</p>
+<pre><code>$ cd hpaftpd-1.05
+
+$ fakechroot fakeroot ./hpaftpd -l -p2121 -unobody -d../ftp-root/
+</code></pre>
+<p>In un altro terminale, provate a connettervi al server FTP, usando <code>anonymous</code>sia come username sia come password.</p>
+<pre><code>$ ftp localhost 2121
+Connected to localhost.
+
+220 HighPerfomanceAnonymousFTPServer
+Name (localhost:unina): anonymous
+331 Password required for anonymous
+Password: 
+
+230 User anonymous logged in
+Remote system type is UNIX.
+Using binary mode to transfer files.
+
+ftp&gt; ls
+227 Entering Passive Mode (127,0,0,1,4,0).
+150 Open data connection
+drwxr-xr-x    2 root root      4096 Sep 19 17:54 .
+drwxr-xr-x    2 root root      4096 Sep 19 17:54 ..
+-rw-r--r--    1 root root         5 Sep 19 16:13 ciao.txt
+226 Transfer complete
+
+ftp&gt; pwd
+257 &quot;/&quot; is current work directory.
+
+ftp&gt; quit
+221 Goodbye.
+</code></pre>
+<p><strong>Nota</strong>: Il server FTP tenta di creare una <em>chroot jail</em> e fare <em>de-privileging</em>, per mitigare potenziali tentativi di exploitation. Tuttavia, queste funzionalità richiedono i privilegi di amministratore, ad esempio tramite il comando <code>sudo</code>, che ostacolano l'automazione del testing (ad esempio, la raccolta di <em>core dump</em>). Ai fini dell'esperimento, per evitare il ricorso ai privilegi di amministratore, si esegue il server FTP in un ambiente fittizio tramite i comandi <code>fakechroot</code> e <code>fakeroot</code>, per simulare i privilegi per chroot jail e de-privileging.  </p>
+<p>Per effettuare il fuzzing, lasciare il server FTP in esecuzione e in attesa di connessioni.</p>
+<p>Su un'altra finestra di terminale, avviare <code>msfconsole</code>. Per avviare il fuzzing, inserire i comandi come segue. <code>msf6 &gt;</code> rappresenta il prompt dei comandi di Metasploit.</p>
+<p>In questo esempio, Metasploit genera richieste FTP in vari punti del protocollo, inserendo delle stringhe cicliche molto lunghe al posto dei dati originali. Le stringhe cicliche hanno lunghezza da 1 a 1000 caratteri, con incrementi di 100 caratteri ad ogni tentativo.</p>
+<pre><code>$ ./msfconsole
+
+msf6 &gt; search fuzzers
+
+search fuzzers
+
+Matching Modules
+================
+
+   #   Name                                            Disclosure Date  Rank    Check  Description
+   -   ----                                            ---------------  ----    -----  -----------
+   ...
+   18  auxiliary/fuzzers/ftp/ftp_pre_post                               normal  No     Simple FTP Fuzzer
+   ...
+
+msf6 &gt; use auxiliary/fuzzers/ftp/ftp_pre_post
+
+msf6 &gt; info
+
+       Name: Simple FTP Fuzzer
+     Module: auxiliary/fuzzers/ftp/ftp_pre_post
+     ...
+
+msf6 auxiliary(fuzzers/ftp/ftp_pre_post) &gt; set RHOSTS 127.0.0.1
+msf6 auxiliary(fuzzers/ftp/ftp_pre_post) &gt; set RPORT  2121
+msf6 auxiliary(fuzzers/ftp/ftp_pre_post) &gt; set STARTSIZE 1
+msf6 auxiliary(fuzzers/ftp/ftp_pre_post) &gt; set ENDSIZE 100
+msf6 auxiliary(fuzzers/ftp/ftp_pre_post) &gt; set STEPSIZE 1000
+
+msf6 auxiliary(fuzzers/ftp/ftp_pre_post) &gt; run
+</code></pre>
+<p>Ripetere l'esperimento precedente, inserendo una vulnerabilità nel server FTP (un buffer overflow). Per inserire la vulnerabilità, usare il seguente comando.</p>
+<pre><code>$ patch -p1 -d hpaftpd-1.05/ &lt; hpaftpd-vulnerable.patch
+</code></pre>
+<p>Ricompilare e ri-lanciare il server FTP. Il server andrà in crash quando la stringa che indica il comando FTP eccede i 4 caratteri. È possibile rilevare la vulnerabilità ri-lanciando Metasploit come nel caso precedente.</p>
+<p>Per rimuovere la vulnerabilità, è possibile rimuovere la modifica con questo comando.</p>
+<pre><code>$ patch -R -p1 -d hpaftpd-1.05/ &lt; hpaftpd-vulnerable.patch
+</code></pre>
+<h2 id="boofuzz">Boofuzz</h2>
+<p>In questo esempio, viene mostrato il fuzzing dello stesso server FTP dell'esempio precedente, tramite il tool Boofuzz. Fare riferimento all'esempio precedente per compilare e avviare il server FTP, e per inserire una vulnerabilità di buffer overflow.</p>
+<p>Posizionarsi nella cartella <code>boofuzz</code>, e clonare il submodule Git contenente il tool.</p>
+<pre><code>$ cd boofuzz
+
+$ git submodule update --init --recursive
+</code></pre>
+<p>Applicare la patch fornita insieme all'esempio, e installare il tool, come segue.</p>
+<pre><code>$ patch -d boofuzz-fuzzer/ -p1 &lt; boofuzz-isalive.patch
+
+$ cd boofuzz-fuzzer
+$ pip3 install .
+$ cd ..
+</code></pre>
+<p>Prima di avviare il fuzzing, avviare una nuova finestra di terminale, in cui eseguire il programma <em>process monitor</em> fornito da Boofuzz. Questo programma rileva gli eventuali crash del server FTP, raccoglie i log dei test (ad esempio, il messaggio che è stato inviato al server FTP prima del crash), raccoglie l'immagine di memoria del processo del server FTP al momento del crash (<em>core dump</em>), e ri-avvia il server FTP per ripetere i test.</p>
+<pre><code>$ ulimit -c unlimited
+$ sudo bash -c &quot;echo $PWD/core &gt; /proc/sys/kernel/core_pattern&quot;
+$ sudo bash -c 'echo 0 &gt; /proc/sys/kernel/core_uses_pid'
+$ sudo systemctl disable apport.service
+
+$ python3 boofuzz-fuzzer/process_monitor_unix.py -d ./coredumps
+
+[04:11.23] Process Monitor PED-RPC server initialized:
+[04:11.23]   listening on:  0.0.0.0:26002
+[04:11.23]   crash file:    ..../boofuzz/boofuzz-crash-bin
+[04:11.23]   # records:     0
+[04:11.23]   proc name:     None
+[04:11.23]   log level:     1
+[04:11.23] awaiting requests...
+</code></pre>
+<p>Su un'altra finestra di terminale, avviare il fuzzing con questo comando.</p>
+<pre><code>$ python3 ftp_hpa.py
+</code></pre>
+<p>È possibile osservare il progresso del fuzzing sia tramite shell, sia tramite browser al link <a href="http://localhost:26000">http://localhost:26000</a>.</p>
+<h2 id="mutiny">Mutiny</h2>
+<p>In questo esempio, viene mostrato il fuzzing dello stesso server FTP dell'esempio precedente, tramite il tool Mutiny. Fare riferimento all'esempio precedente per compilare e avviare il server FTP, e per inserire una vulnerabilità di buffer overflow.</p>
+<p>Installare <code>scapy</code>.</p>
+<pre><code>$ pip3 install scapy
+</code></pre>
+<p>Posizionarsi nella cartella <code>mutiny</code>. Se non è stato già fatto nell'esempio precedente, effettuare il clone dei submodule nel repository.</p>
+<pre><code>$ cd mutiny
+
+$ git submodule update --init --recursive
+</code></pre>
+<p>Mutiny utilizza internamente il tool <code>radamsa</code>, un fuzzer a linea di comando. Compilare <code>radamsa</code> come segue.</p>
+<pre><code>$ cd mutiny-fuzzer
+
+$ tar zxf radamsa-v0.6.tar.gz
+$ cd radamsa-v0.6/
+$ make
+$ cd ..
+</code></pre>
+<p>Prima di applicare Munity, è necessario disporre di una traccia di traffico di rete FTP, in formato PCAP. Nella cartella con l'esempio, viene fornito il file PCAP <code>ftp.pcap</code>.</p>
+<p>Per stampare il contenuto del file PCAP:</p>
+<pre><code>$ tshark -r  ftp.pcap -V
+</code></pre>
+<p>Il primo passo per utilizzare Mutiny è di configurare il fuzzer usando il file PCAP, tramite lo script <code>mutiny_prep.py</code>. Quando chiede di <em>combine payloads into single messages</em>, è possibile rispondere "no". Selezionare la risposta di default per le altre domande. Lo script creerà il file <code>ftp-0.fuzzer</code>.</p>
+<pre><code>$ cd mutiny-fuzzer
+
+$ python3 mutiny_prep.py -a ../ftp.pcap
+</code></pre>
+<p>Avviare il server FTP in una finestra di terminale separata.</p>
+<p>Infine, avviare il fuzzer.</p>
+<pre><code>$ python3 mutiny.py ftp-0.fuzzer 127.0.0.1
+</code></pre>
+<h2 id="afl">AFL</h2>
+<p>In questo esempio, viene mostrato il fuzzing della libreria open-source <code>libxml2</code>, tramite il tool AFL, per riprodurre la vulnerabilità <code>CVE-2015-8317</code> (heap buffer overflow). Il codice è disponibile nella macchina virtuale nella cartella <code>examples/fuzzing-examples</code>, e nel repository online su <a href="https://github.com/swsec-book/fuzzing-examples/">https://github.com/swsec-book/fuzzing-examples/</a>.</p>
+<p>Per effettuare il fuzzing della libreria, è necessario creare un programma (<em>test harness</em>) che incorpori la libreria e ne chiami le funzioni. In questo esempio, viene usato un programma che legge un file XML e ne faccia la stampa (<em>dump</em>) tramite la libreria. Nel caso in cui il file in ingresso non sia in formato XML corretto, la libreria produce un messaggio di errore.</p>
+<pre><code>$ ./harness regressions.xml
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;RegressionTests&gt;
+&lt;!--
+  Within the following test descriptions the possible elements are:
+  ...
+&lt;/RegressionTests&gt;
+
+$ ./harness ciao.txt
+ciao.txt:1: parser error : Start tag expected, '&lt;' not found
+ciao mondo
+^
+</code></pre>
+<p>Scomprimere l'archivio <code>libxml2-2.9.2.tar.gz</code>. All'interno della cartella della libreria, creare il file <code>harness.c</code> con il seguente codice.</p>
+<pre><code>#include &quot;libxml/parser.h&quot;
+#include &quot;libxml/tree.h&quot;
+
+int main(int argc, char **argv) {
+
+    xmlInitParser();
+
+    xmlDocPtr doc = xmlReadFile(argv[1], NULL, 0);
+
+    xmlDocDump(stdout, doc);
+
+    if (doc != NULL)
+        xmlFreeDoc(doc);
+
+    xmlCleanupParser();
+
+    return(0);
+}
+</code></pre>
+<p>Compilare la libreria e il programma harness con i seguenti comandi.</p>
+<pre><code>$ cd libxml2-2.9.2
+
+$ CC=afl-clang-fast  ./autogen.sh
+
+$ CC=afl-clang-fast  ./configure  --with-python=no --disable-shared
+
+$ AFL_USE_ASAN=1 make -j 4 libxml2.la
+
+$ AFL_USE_ASAN=1 afl-clang-fast  ./harness.c .libs/libxml2.a 
+                      -Iinclude  -lz  -o harness
+</code></pre>
+<p>Avviare AFL con il seguente comando. Il comando indica al fuzzer di usare come <em>seed</em> i file nella cartella <code>go-fuzz-corpus/xml/corpus/</code>.</p>
+<pre><code>$ afl-fuzz  -i &lt;PATH&gt;/go-fuzz-corpus/xml/corpus/ 
+            -o afl_libxml2 
+            -m none
+            -- ./harness @@
+</code></pre>
+<p>Il fuzzer rileva la vulnerabilità dopo pochi minuti.</p>
+<p><img alt="AFL libxml2" src="../../img/fuzzing/afl-libxml2.png" /></p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
