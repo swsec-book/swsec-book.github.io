@@ -1,5 +1,19 @@
 # Static analysis
 
+## CodeQL - setup
+
+Per utilizzare CodeQL, sono necessari due passaggi.
+
+1. Installare l'estensione CodeQL in Visual Studio Code dal menù "Extensions", oppure da <https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-codeql>. L'estensione scaricherà automaticamente i tool a linea di comando (CLI) per CodeQL.
+
+2. Clonare da GitHub la cartella di lavoro di CodeQL, con il seguente comando (nota: è importante includere `--recursive`).
+```
+$ git clone --recursive https://github.com/github/vscode-codeql-starter
+```
+
+CodeQL è già predisposto all'interno della macchina virtuale.
+
+
 ## CodeQL - query puntuali
 
 Sono qui mostrati alcuni esempi di analisi statica su piccoli programmi, tramite il framework **CodeQL**. Sia il codice dei programmi da analizzare, sia il codice delle query, sono disponibili nella macchina virtuale nella cartella `swsec-labs/static-analysis/`, e nel repository online su <https://github.com/swsec-book/swsec-labs>.
@@ -18,7 +32,7 @@ Per creare un database CodeQL del progetto, ripetere il build del progetto trami
 $ codeql database create "codeql-demo-db" --language=java
 ```
 
-Il database è già disponibile nel file `codeql-demo-db.zip` cartella.
+Il database è già disponibile nel file `codeql-demo-db.zip` nella macchina virtuale e nel repository degli esempi.
 
 Avviare VSCode con il workspace fornito con CodeQL, tramite la scorciatoia fornita sul desktop della macchina virtuale, oppure tramite il seguente comando.
 
