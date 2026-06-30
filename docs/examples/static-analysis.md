@@ -11,7 +11,14 @@ Per utilizzare CodeQL, sono necessari due passaggi.
 $ git clone --recursive https://github.com/github/vscode-codeql-starter
 ```
 
-CodeQL è già predisposto all'interno della macchina virtuale.
+Avviare VSCode aprendo la cartella di lavoro di CodeQL, tramite il seguente comando:
+```
+$ code ~/vscode-codeql-starter/vscode-codeql-starter.code-workspace
+```
+
+
+CodeQL è già predisposto all'interno della macchina virtuale. 
+È possibile avviare CodeQL tramite la scorciatoia fornita sul desktop della macchina virtuale. 
 
 
 ## CodeQL - query puntuali
@@ -33,12 +40,6 @@ $ codeql database create "codeql-demo-db" --language=java
 ```
 
 Il database è già disponibile nel file `codeql-demo-db.zip` nella macchina virtuale e nel repository degli esempi.
-
-Avviare VSCode con il workspace fornito con CodeQL, tramite la scorciatoia fornita sul desktop della macchina virtuale, oppure tramite il seguente comando.
-
-```
-code ~/vscode-codeql-starter/vscode-codeql-starter.code-workspace
-```
 
 Nella barra laterale di VSCode, clickate sulla icona della estensione CodeQL (simbolo "QL"). Nella sezione *database* utilizzare la funzione di import del database, selezionando il file zip del database del progetto di esempio. 
 
