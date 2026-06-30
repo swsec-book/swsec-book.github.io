@@ -186,19 +186,19 @@ import semmle.code.java.dataflow.TaintTracking
 module MyTaintConfig implements DataFlow::ConfigSig {
 
 	predicate isSource(DataFlow::Node source) {
-		exists(MethodCall ma | 
-			source.asExpr() = ma and
-			ma.getCallee().getName() = "mySource" and
-			ma.getCallee().getDeclaringType().getName() = "MyClassA"
+		exists(MethodCall a | 
+			a.getCallee().getName() = "mySource" and
+			a.getCallee().getDeclaringType().getName() = "MyClassA" and
+            source.asExpr() = a
 		)
 	}
 
 	predicate isSink(DataFlow::Node sink) {
-		exists(VarAccess arg, MethodCall mb |
-			sink.asExpr() = arg and
-			arg = mb.getAnArgument() and
-			mb.getCallee().getName() = "mySink" and
-			mb.getCallee().getDeclaringType().getName() = "MyClassB"
+		exists(MethodCall b, VarAccess arg |
+			b.getCallee().getName() = "mySink" and
+			b.getCallee().getDeclaringType().getName() = "MyClassB" and
+			arg = b.getAnArgument() and
+			sink.asExpr() = arg
 		)
 	}
   
