@@ -57,7 +57,7 @@ Una possibile strategia è di chiedere allo LLM di indicare i passaggi separatam
 
 L'obiettivo di questo esercizio è di riprodurre l'attacco multi-turno **Crescendo** (**Laboratorio 5**) tramite il tool **PyRIT**.
 
-Anche in questo caso, l'attacco di avvale di un LLM aggiuntivo (**adversarial LLM**) per generare i prompt di attacco. Si faccia riferimento all'[esempio precedente di attacco tramite PyRIT](../examples/llm-vulns.md#pyrit).
+Anche in questo caso, l'attacco si avvale di un LLM aggiuntivo (**adversarial LLM**) per generare i prompt di attacco. Si faccia riferimento all'[esempio precedente di attacco tramite PyRIT](../examples/llm-vulns.md#pyrit).
 
 È possibile effettuare l'attacco partendo dallo script `crescendo.ipynb` riportato di seguito. Lo
  script si riferisce alla versione di PyRIT 0.12.0. 
