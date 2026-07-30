@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://swsec-book.github.io/exercises/static-analysis/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Static Analysis - Software Security Book</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-8JQY0C31BY"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', "G-8JQY0C31BY");
+        </script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Software Security Book</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../setup/" class="nav-link">Setup</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../examples/mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../examples/web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../examples/llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../examples/fuzzing/" class="dropdown-item">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="../../examples/static-analysis/" class="dropdown-item">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Exercises</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../fuzzing/" class="dropdown-item">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../fuzzing/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#static-analysis-exercises" class="nav-link">Esercizi su analisi statica</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#query-di-esempio" class="nav-link">Query di esempio</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#definizione-di-memcpy" class="nav-link">Definizione di memcpy()</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#definizione-delle-macro" class="nav-link">Definizione delle macro</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#chiamate-alla-funzione-memcpy" class="nav-link">Chiamate alla funzione memcpy()</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#invocazioni-delle-macro" class="nav-link">Invocazioni delle macro</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#espressioni" class="nav-link">Espressioni</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#creare-una-nuova-classe" class="nav-link">Creare una nuova classe</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#analisi-di-taint-tracking" class="nav-link">Analisi di taint tracking</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#input-validation" class="nav-link">Input validation</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="static-analysis-exercises">Esercizi su analisi statica</h1>
+<p>Il seguente esercizio chiede di identificare delle vere vulnerabilità di <em>buffer-overflow</em> nel progetto open-source U-Boot tramite analisi statica con CodeQL.</p>
+<p>U-Boot è un <em>boot-loader</em> utilizzato per l'avviamento del sistema operativo in sistemi embeddedd. Le vulnerabilità possono essere attaccate quando U-Boot è configurato per caricare i file di avviamento dalla rete. L'attaccante è in grado di aggirare i controlli sulla validità dei file basati su firma digitale.</p>
+<p><img alt="U-Boot" src="../../img/fuzzing/u-boot.png" /></p>
+<p>Il codice dell'esercizio è disponibile nella macchina virtuale nella cartella <code>swsec-labs/static-analysis/</code>, e nel repository online su <a href="https://github.com/swsec-book/swsec-labs">https://github.com/swsec-book/swsec-labs</a>. L'esercizio è tratto da una competizione online <em>capture-the-flag</em> organizzata dal GitHub Security Lab (<a href="https://securitylab.github.com/ctf/uboot/">https://securitylab.github.com/ctf/uboot/</a>).</p>
+<p>Il codice del progetto U-Boot contiene numerosi punti che:</p>
+<ul>
+<li>leggono dati dalla rete (<em>source</em> della taint propagation);</li>
+<li>passano i dati alla funzione <code>memcpy()</code> nel parametro <code>size</code> (<em>sink</em> della taint propagation);</li>
+<li>non effettuano alcuna input validation.</li>
+</ul>
+<p><img alt="U-Boot taint propagation" src="../../img/fuzzing/u-boot-taint.png" /></p>
+<p>L'esercizio richiede di scrivere una query CodeQL per identificare le chiamate non sicure di questo tipo alla funzione <code>memcpy()</code>.</p>
+<h2 id="query-di-esempio">Query di esempio</h2>
+<p>Nella macchina virtuale, avviare Visual Studio Code con l'estensione per CodeQL, utilizzando l'icona nella barra a sinistra di Ubuntu.
+Poi, posizionarsi nella sezione di Visual Studio Code dedicata a CodeQL, cliccando sul simbolo "QL" in basso nella barra  a sinistra di Visual Studio Code.</p>
+<p><img alt="VSCode CodeQL" src="../../img/fuzzing/vscode-codeql.png" /></p>
+<p>Per svolgere il primo esercizio, selezionare il database "u-boot" nel menu in alto a sinistra. Poi, aprire il file <code>03_function_definitions.ql</code> nella sezione "queries" a sinistra.</p>
+<p>Inserire nel file il seguente codice. Si raccomanda di <em>non fare copia-incolla</em>, ma di digitarlo manualmente, per familiarizzare con la sintassi e con l'editor.</p>
+<pre><code class="language-ql">import cpp
+
+from Function f
+where f.getName() = &quot;strlen&quot;
+select f, &quot;a function named strlen&quot;
+</code></pre>
+<p>CodeQL fornirà dei suggerimenti tramite auto-completamento:</p>
+<ul>
+<li>Dopo aver digitato <code>from</code> e le prime lettere di <code>Function</code>, l'ambiente proporrà una lista di <em>classi</em> dalla libreria di CodeQL. Questo meccanismo permette di scoprire quali classi sono disponibili per rappresentare il codice sorgente.</li>
+<li>Dopo aver digitato <code>where f.</code>, l'ambiente proporrà una lista di <em>predicati</em> che possono essere chiamati sulla variabile <code>f</code>.</li>
+<li>Digita le prime lettere di <code>getName()</code> per restringere la lista.</li>
+<li>Muovi il cursore sul nome di un predicato per consultarne la documentazione. Questo meccanismo permette di scoprire quali predicati sono disponibili e cosa fanno.</li>
+</ul>
+<p>Eseguire la query, cliccando sul nome del file con il tasto destro, e selezionando <strong>CodeQL: Run Query</strong>.</p>
+<p>Analizza i risultati che appaiono nel pannello dei risultati. Clicca sugli hyperlink dei risultati per navigare nel codice sorgente di U-Boot in cui sono stati trovati i risultati. Cosa fa questa query?</p>
+<h2 id="definizione-di-memcpy">Definizione di <code>memcpy()</code></h2>
+<p>In questo esercizio, scrivi una nuova query nel file <code>04_memcpy_definitions.ql</code>. </p>
+<p>Copia la query dell'esercizio precedente in questo file, e modifica la clausola <code>where</code> in modo da trovare le definizioni delle funzioni di nome <code>memcpy</code>.</p>
+<p>Esegui la query sul progetto U-Boot per verificare i risultati.</p>
+<h2 id="definizione-delle-macro">Definizione delle macro</h2>
+<p>In questo esercizio, scrivi una nuova query nel file <code>05_macro_definitions.ql</code>. </p>
+<p>Scrivi una query che trovi le definizioni delle macro di nome <code>ntohs</code>, <code>ntohl</code>, o <code>ntohll</code>. Usa l'auto-completamento come guida.</p>
+<ul>
+<li>
+<p>Attendi brevemente dopo aver scritto <code>from</code> per ottenere la lista delle classi disponibili per programmi C/C++. Quale classe nella lista rappresenta le macro? Crea una variabile nella query, usando questa classe come tipo.</p>
+</li>
+<li>
+<p>Nella sezione <code>where</code>, scrivi il nome della variabile che hai creato seguita da un punto <code>.</code>, e attendi brevemente che l'ambiente mostri una lista di predicati disponibili per quel tipo di variabile. Consulta la documentazione di questi predicati. Quale predicato fornisce il nome di una macro?</p>
+</li>
+<li>
+<p>Usa la keyword <code>or</code> per combinare più condizioni nella query. In questo caso, vogliamo trovare le definizioni che appartengano ad almeno uno di tre possibili nomi.</p>
+</li>
+</ul>
+<p>Dopo aver completato la query, prova a scrivere una versione più compatta che eviti l'uso di <code>or</code>. Puoi utilizzare una espressione regolare, tramite il predicato <code>string::regexpMatch</code> (disponibile tra i <a href="https://codeql.github.com/docs/ql-language-reference/ql-language-specification/#built-ins-for-string">predicati built-in per le stringhe</a>). CodeQL usa le convenzioni di Java per le espressioni regolari.</p>
+<p>Inoltre, prova ad utilizzare la sintassi dei <em>set</em> di CodeQL per confrontare il nome della macro con un insieme di possibili valori (ad esempio <code>["bar", "baz", "quux"]</code>).</p>
+<h2 id="chiamate-alla-funzione-memcpy">Chiamate alla funzione <code>memcpy()</code></h2>
+<p>In questo esercizio, scrivi una nuova query nel file <code>06_memcpy_calls.ql</code>. </p>
+<p>Questo esercizio richiede di cercare con CodeQL tutti i punti del programma che <strong>chiamano</strong> la funzione <code>memcpy</code>, a differenza del caso precedente che ha cercato i punti di <strong>definizione</strong> delle funzioni.</p>
+<p>Procedere nel seguente modo:</p>
+<ul>
+<li>Nella clausola <code>FROM</code>, dichiarare due variabili: (1) una variabile per le <em>dichiarazioni di funzioni</em> (come per gli esercizi precedenti); (2) una per le <em>chiamate a funzione</em>. Si utilizzi l'auto-completamento per trovare la classe che rappresenta le chiamate a funzione.</li>
+<li>Nella clausola <code>WHERE</code>, si utilizzi un predicato della prima variabile (dichiarazione di funzione) per indicare che il nome della funzione dichiarata sia <code>memcpy</code>, in modo analogo agli esercizi precedenti.</li>
+<li>Inoltre, nella clausola <code>WHERE</code>, si utilizzi un predicato della seconda variabile (chiamata a funzione) per indicare che la funzione chiamata sia uguale alla prima variabile (la dichiarazione della funzione <code>memcpy</code>). Usare l'auto-completamento per trovare il predicato che rappresenta la funzione che viene chiamata ("target").</li>
+</ul>
+<p>Esempio di ricerca di tutte le chiamata alla funzione <code>std::map&lt;...&gt;::find()</code> (nota: in questo esercizio non è necessario usare il predicato <code>getDeclaringType</code>).</p>
+<pre><code class="language-ql">import cpp
+
+from FunctionCall call, Function fcn
+where
+  call.getTarget() = fcn and
+  fcn.getDeclaringType().getSimpleName() = &quot;map&quot; and
+  fcn.getDeclaringType().getNamespace().getName() = &quot;std&quot; and
+  fcn.hasName(&quot;find&quot;)
+select call
+</code></pre>
+<p>Dopo aver completato la query, prova a modificarla per renderla più semplice, evitando di usare la variabile <code>Function</code>. Le 2 seguenti query sono equivalenti:</p>
+<pre><code class="language-ql">from Class1 c1, Class2 c2
+where
+  c1.getClass2() = c2 and
+  c2.getProp() = &quot;something&quot;
+select c1
+</code></pre>
+<pre><code class="language-ql">from Class1 c1
+where c1.getClass2().getProp() = &quot;something&quot;
+select c1
+</code></pre>
+<h2 id="invocazioni-delle-macro">Invocazioni delle macro</h2>
+<p>In questo esercizio, scrivi una nuova query nel file <code>07_macro_invocations.ql</code>. </p>
+<p>Questo esercizio richiede di trovare tutte le <em>invocazioni</em> delle macro <code>ntohs</code>, <code>ntohl</code> e <code>ntohll</code>. La query è simile all'esercizio precedente. Le <em>invocazioni di macro</em> sono analoghe alle <em>chiamate a funzione</em>. Tuttavia, è necessario usare una classe CodeQL differente.</p>
+<ul>
+<li>Usare l'auto-completamento per trovare la classe CodeQL che rappresenta le invocazioni di macro, e dichiarare una variabile che appartiene a questa classe.</li>
+<li>Usare l'auto-completamento sulla variabile della invocazione della macro, per trovare il predicato che indica la macro che viene invocata ("target").</li>
+<li>Combinare questi elementi con la logica degli esercizi precedenti per fare in modo che il target sia una della macro <code>ntoh*</code>.</li>
+<li>Come prima, è possibile semplificare la query omettendo la variabile superflua.</li>
+</ul>
+<h2 id="espressioni">Espressioni</h2>
+<p>In questo esercizio, scrivi una nuova query nel file <code>08_macro_expressions.ql</code>. </p>
+<p>A partire dalle invocazioni di macro trovate dall'esercizio precedente, si vuole ora trovare le <em>espressioni</em> del programma che contengono le invocazioni della macro <code>ntohs</code>, <code>ntohl</code> e <code>ntohll</code>. Nei linguaggi di programmazione, una espressione è una porzione del programma che contiene delle operazioni, in questo caso una invocazione di macro.</p>
+<p>Nella clausola <code>SELECT</code>, si utilizzi il <a href="https://codeql.github.com/codeql-standard-libraries/cpp/semmle/code/cpp/Macro.qll/predicate.Macro$MacroInvocation$getExpr.0.html">predicato <code>getExpr()</code></a> sulla variabile che rappresenta la invocazione, per ottenere l'espressione che la contiene.</p>
+<p>L'espressione così trovata rappresenterà il <em>source</em> della taint propagation analysis.</p>
+<h2 id="creare-una-nuova-classe">Creare una nuova classe</h2>
+<p>In questo esercizio, scrivi una nuova query nel file <code>09_class_network_byteswap.ql</code>. </p>
+<p>Questo esercizio prevede di scrivere una <a href="https://codeql.github.com/docs/ql-language-reference/types/#classes">nuova classe CodeQL</a>. La classe permette di scrivere query più facili da leggere e da riutilizzare.</p>
+<p>Si definisca una classe per rappresentare il sotto-insieme di invocazioni verso le sole macro <code>ntohl</code>, <code>ntohs</code> e <code>ntohll</code>. Sarà possibile usare la classe in modo analogo alla classe <code>MacroInvocation</code>, ma per indicare solo un sotto-insieme delle invocazioni di macro.</p>
+<p>In particolare, la nuova classe deve essere una sotto-classe di <code>Expr</code>. Come nell'esercizio precedente, useremo un predicato per ottenere le <em>espressioni</em> che contengono le invocazioni alle macro <code>ntohl</code>, <code>ntohs</code> e <code>ntohll</code>.</p>
+<p>In questa query, utilizzeremo la <a href="https://codeql.github.com/docs/ql-language-reference/formulas/#explicit-quantifiers">sintassi <em>exists</em></a>. Questa sintassi è utile per definire dei nuovi predicati e classi: essa introduce una variabile temporanea, e determina i valori che soddisfano una certa condizione (<strong>quantifier</strong>).</p>
+<p>Altri esempi sono disponibili nel tutorial CodeQL <a href="https://codeql.github.com/docs/writing-codeql-queries/find-the-thief/">"Find the thief"</a>.</p>
+<p>Per risolvere l'esercizio, si completi il seguente codice:</p>
+<pre><code class="language-ql">import cpp
+
+class NetworkByteSwap extends Expr {
+  NetworkByteSwap () {
+    // TODO: replace &lt;class&gt; and &lt;var&gt;
+    exists(&lt;class&gt; &lt;var&gt; |
+      // TODO: &lt;condition&gt;
+    )
+  }
+}
+
+from NetworkByteSwap n
+select n, &quot;Network byte swap&quot;
+</code></pre>
+<ul>
+<li>La notazione <code>extends Expr</code> indica che la classe è una sotto-classe di <code>Expr</code>. La query inizierà selezionando tutti i valori di tipo <code>Expr</code>, che saranno poi ulteriormente selezionati per ottenere le sole espressioni verso le tre macro come nell'esercizio precedente.</li>
+<li>La sintassi <code>NetworkByteSwap() { ... }</code> rappresenta il <a href="https://codeql.github.com/docs/ql-language-reference/types/#characteristic-predicates">predicato caratterizzante della classe</a>. Il predicato seleziona il sotto-insieme di elementi della classe <code>Expr</code> che appartengono alla sotto-classe <code>NetworkByteSwap</code>.</li>
+<li>Nella prima parte della sintassi di <code>exists</code> (prima del carattere <code>|</code>), occorre dichiarare una variabile temporanea <code>my_invocation</code>che rappresenti le invocazioni di macro. La sintassi è simile a quella della clausola <code>FROM</code>, senza questa parola chiave, ma solo con il nome della classe e il nome della variabile.</li>
+<li>Nella seconda parte della sintassi di <code>exists</code> (dopo il carattere <code>|</code>), occorre inserire una condizione per indicare che la invocazione <code>my_invocation</code> abbia come target le tre macro <code>ntohl</code>, <code>ntohs</code> e <code>ntohll</code>. La sintassi è simile a quella della clausola <code>WHERE</code>, senza questa parola chiave.</li>
+<li>Nella seconda parte della sintassi di <code>exists</code>, occorre anche inserire una ulteriore condizione in <code>AND</code> con il punto precedente. Occorre indicare che le espressioni da assegnare alla sotto-classe (rappresentati dalla parola chiave <code>this</code>) siano uguali alla espressione che contiene l'invocazione <code>my_invocation</code>.</li>
+</ul>
+<h2 id="analisi-di-taint-tracking">Analisi di taint tracking</h2>
+<p>In questo esercizio, scrivi una nuova query nel file <code>10_taint_tracking.ql</code>. </p>
+<p>Si vuole combinare le query degli esercizi precedenti, per trovare tutti i flussi nel programma che collegano i <em>source</em> (le invocazioni delle macro) con i <em>sink</em> (il terzo parametro delle chiamate a <em>memcpy</em>). Di tutte le centinaia di chiamate a <code>memcpy</code> e invocazioni delle macro, saranno identificati solo i casi vulnerabili.</p>
+<p>Per la query, utilizzare la libreria <a href="https://codeql.github.com/docs/codeql-language-guides/analyzing-data-flow-in-cpp/">taint tracking</a> di CodeQL. La libreria fornisce il predicato <code>flowPath()</code> per determinare quali source sono collegate a dei sink.</p>
+<p>Per risolvere l'esercizio, si completi il seguente codice:</p>
+<pre><code class="language-ql">/**
+ * @kind path-problem
+ */
+
+import cpp
+import semmle.code.cpp.dataflow.TaintTracking
+
+class NetworkByteSwap extends Expr {
+  // TODO: copy from previous step
+}
+
+module MyConfig implements DataFlow::ConfigSig {
+
+  predicate isSource(DataFlow::Node source) {
+    // TODO
+  }
+  predicate isSink(DataFlow::Node sink) {
+    // TODO
+  }
+}
+
+module MyTaint = TaintTracking::Global&lt;MyConfig&gt;;
+import MyTaint::PathGraph
+
+from MyTaint::PathNode source, MyTaint::PathNode sink
+where MyTaint::flowPath(source, sink) 
+select sink, source, sink, &quot;Network byte swap flows to memcpy&quot;
+</code></pre>
+<ul>
+<li>Ri-utilizzare il codice della classe <code>NetworkByteSwap</code> dell'esercizio precedente</li>
+<li>Completare il predicato <code>isSource()</code>, in modo che esso ritorni <code>true</code> per i nodi del grafo data flow che rappresentano le invocazioni delle macro <code>ntohl</code>, <code>ntohs</code>, e <code>ntohll</code>.<ul>
+<li>Occorre verificare che la variabile <code>source</code> appartenga alla classe <code>NetworkByteSwap</code>. È possibile usare la sintassi <code>&lt;value&gt; instanceof &lt;myclass&gt;</code>.</li>
+<li>Nota che la variabile <code>source</code> è di tipo <code>DataFlow::Node</code> (grafo data flow), mentre la classe <code>NetworkByteSwap</code> è una sotto-classe di <code>Expr</code> (grafo AST). Per cui, non è sufficiente scrivere <code>source instanceof NetworkByteSwap</code> (il compilatore segnalerà un errore). Usare l'auto-completamento sulla variabile <code>source</code> per trovare il predicato che permette di convertire la variabile in <code>Expr</code>.</li>
+</ul>
+</li>
+<li>Completare il predicato <code>isSink()</code>, in modo che esso ritorno <code>true</code> per i nodi del grafo data flow che rappresentano il terzo parametro di una chiamata alla funzione <code>memcpy</code>.<ul>
+<li>Usare l'auto-completamento per trovare <em>il predicato che restituisce lo n-esimo parametro</em> di una chiamata a funzione.</li>
+<li>Usare il predicato trovato nel punto precedente per convertire la variabile <code>sink</code> (grafo data flow) in <code>Expr</code> (grafo AST).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Nota:</strong> <a href="https://securitylab.github.com/research/cve-2018-4259-macos-nfs-vulnerability">Questo articolo</a> riporta un esempio completo.</p>
+<p><strong>Nota:</strong> È necessario includere la annotazione iniziale <em>path-problem</em> e la sintassi di <code>SELECT</code> come indicato nel codice di partenza. Esse configurano l'ambiente per visualizzare i risultati della query come percorsi di taint propagation, invece che come singole linee di codice.</p>
+<h2 id="input-validation">Input validation</h2>
+<p>È possibile estendere la query di taint tracking in modo da escludere i casi non-vulnerabili. In alcuni casi, il percorso di taint propagation contiene una istruzione di input validation, che previene il buffer overflow.</p>
+<p>Per escludere i casi con input validation, si estenda la precedente classe <code>MyConfig</code> aggiungendo il predicato <code>isBarrier()</code>. Si lascia come esercizio aperto lo stabilire in che modo rilevare la presenza di input validation.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
