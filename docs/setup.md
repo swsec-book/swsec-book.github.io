@@ -8,17 +8,17 @@ Si consiglia di eseguire la macchina virtuale usando il software **VMware Workst
 
 Successivamente, scaricare sul proprio computer il file della macchina virtuale. Il file è in formato OVF (*Open Virtualization Format*), ed ha estensione **.OVA** (*Open Virtual Appliance*). È possibile utilizzare uno qualunque dei seguenti link:
 
-- [Google Drive](https://drive.google.com/file/d/1DsOl31weWqIctVCCZaLRwJePRvYCjJ5Z/view?usp=sharing)
+- [Google Drive](https://drive.google.com/file/d/1Edpt-IRYZTgPnfhLxRYR8Ttqg5x4jXeD/view?usp=sharing)
 - ...
 - ...
 
 Informazioni sul file:
 
 - **Nome del file**:        Software-Security-Linux-x86-2026.OVA
-- **Dimensione**:           11.37 GB
-- **Ultimo aggiornamento**: 21/03/2026
-- **Hash SHA1**:            081eeaec6f28662e18c02675a49a4db49251309a
-- **Hash MD5**:             6efc90d88709ae7a03c89ad0f2071d29
+- **Dimensione**:           12.44 GB
+- **Ultimo aggiornamento**: 27/10/2026
+- **Hash SHA1**:            183d29c8eb597b010ea88a04c2cb723f8141dd2f
+- **Hash MD5**:             16b21299bf6fd86f41a7b471f8175509
 
 
 È possibile verificare l'integrità del file scaricato, confrontando i valori di hash nella tabella con quelli del file scaricato. Per ottenere i valori di hash, aprire la console dei comandi **PowerShell**, e digitate i seguenti comandi testuali.
@@ -53,17 +53,17 @@ Si consiglia di eseguire la macchina virtuale usando il software **VMware Fusion
 
 Successivamente, scaricare sul proprio computer il file della macchina virtuale. Il file è in formato OVF (*Open Virtualization Format*), ed ha estensione **.OVA** (*Open Virtual Appliance*). È possibile utilizzare i seguenti link:
 
-- [Google Drive](https://drive.google.com/file/d/1hiXtFeFKwparJMHjMMvMGUbygOzCOfTJ/view?usp=sharing)
+- [Google Drive](https://drive.google.com/file/d/1hTGGG61JL_CmaeRgcFJy2oXQya8UfyG7/view?usp=sharing)
 - ...
 - ...
 
 Informazioni sul file:
 
 - **Nome del file**:        Software-Security-Linux-ARM-2026.OVA
-- **Dimensione**:           11.75 GB
-- **Ultimo aggiornamento**: 21/03/2026
-- **Hash SHA1**:            43d458aecc041feda3ec2c33179ef270f9627104
-- **Hash MD5**:             c01e862897381b1bb2c072b78052c0d1
+- **Dimensione**:           13.19 GB
+- **Ultimo aggiornamento**: 27/10/2026
+- **Hash SHA1**:            e3315cc69fde32ed700e16372fbaa2ec3093e099
+- **Hash MD5**:             f330eac1e38d62870a3719c1a44cdcaa
 
 È possibile verificare l'integrità del file scaricato, confrontando i valori di hash nella tabella con quelli del file scaricato. Per ottenere i valori di hash, aprire la console dei comandi **Terminale.app**, e digitate i seguenti comandi testuali.
 
